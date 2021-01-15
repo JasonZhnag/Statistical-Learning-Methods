@@ -23,7 +23,7 @@ class NativeBayes:
                 for a in self.pay[y_][col]:
                     self.pay[y_][col][a] += self.alpha
                     self.pay[y_][col][a] /= y_cnt[y_] + self.alpha * len(col_values)
-        for y in y_cnt:
+        for y_ in y_cnt:
             self.py[y_] = (y_cnt[y_] + self.alpha) / (len(X) + self.alpha * len(y_cnt))
 
         if self.verbose:
