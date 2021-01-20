@@ -5,7 +5,9 @@ from math import inf, nan
 from math import log, sqrt
 from collections import Counter
 from scipy import sparse
+from functools import reduce
 
+# Data Structure
 class Heap:
     def __init__(self, arr=None, key=lambda x: x, max_len=inf):
         self.key = key
@@ -41,6 +43,7 @@ class Heap:
     def pop(self):
         return heapq.heappop(self.h)[-1]
 
+# Calculus
 def euc_dis(a, b):
     return np.linalg.norm(a - b, axis=-1)
 
@@ -83,3 +86,39 @@ def safe_sparse_dot(a, b, *, dense_output=False):
             and dense_output and hasattr(ret, "toarray")):
         return ret.toarray()
     return ret
+
+def argmax(arr, key=lambda x: x):
+    arr = [key(a) for a in arr]
+    maxVal = max(arr)
+    return arr.index(maxVal), maxVal
+
+def argmin(arr, key=lambda x: x):
+    arr = [key(a) for a in arr]
+    minVal = min(arr)
+    return arr.index(minVal), minVal
+
+def entropy(p):
+    s = sum(p)
+    p = list(map(lambda x: x / s, p))
+    # return reduce(lambda x, y: x - y*log(y, 2), p)
+    return sum(-i*log(i, 2) for i in p)
+
+def condition_entrpy(X, y, feature_idx):
+    val_cnt = Counter(x[feature_idx] for x in X)
+    ret = 0
+    for val in val_cnt:
+        weight = val_cnt[val] / len(X)
+        entro = entropy(Counter(yi for x, yi in zip(X, y) if x[feature_idx] == val).values())
+        ret += entro * weight
+
+    return ret
+
+def info_gain(X, y, feature_idx):
+    entropy_d = entropy(Counter(y).values())
+    entropy_da = condition_entrpy(X, y, feature_idx)
+    return entropy_d - entropy_da
+
+def info_gain_ratio(X, y, feature_idx):
+    entropy_a = entropy(Counter(x[feature_idx] for x in X).values())
+    return info_gain(X, y, feature_idx) / entropy_a
+
