@@ -122,3 +122,9 @@ def info_gain_ratio(X, y, feature_idx):
     entropy_a = entropy(Counter(x[feature_idx] for x in X).values())
     return info_gain(X, y, feature_idx) / entropy_a
 
+def gini(y):
+    y_cnt = Counter(y)
+    ret = 1
+    for yi in y_cnt:
+        ret -= (y_cnt[yi] / len(y)) ** 2
+    return ret
